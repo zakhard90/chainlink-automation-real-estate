@@ -1,7 +1,23 @@
 {
-  "name": "hardhat-project",
+  "name": "chainlink-automation-real-estate",
+  "version": "1.0.0",
+  "description": "A real estate dApp using Chainlink Automation",
+  "main": "index.js",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "coverage": "npx hardhat coverage"
+  },
+  "author": "Zakhar Deyneka",
+  "license": "MIT",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
-    "hardhat": "^2.22.17"
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@openzeppelin/contracts": "^5.0.0",
+    "@types/mocha": "^10.0.10",
+    "chai": "^4.5.0",
+    "hardhat": "^2.19.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   }
 }

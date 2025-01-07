@@ -27,13 +27,14 @@ contract Minter is ILogAutomation, Ownable {
     address public forwarder;
 
     event MintedBy(address indexed sender);
+    event ForwarderUpdated(address indexed oldAddress, address indexed newAddress);
 
     error InvalidAddress(address);
     error NotAllowed(address);
 
-    constructor() {}
+    constructor() Ownable(msg.sender) {}
 
-    modifier onlyForwarder public {
+    modifier onlyForwarder {
         if(msg.sender != forwarder)
             revert NotAllowed(msg.sender);
         _;
@@ -43,6 +44,7 @@ contract Minter is ILogAutomation, Ownable {
         if (forwarderAddress == address(0)) {
             revert InvalidAddress(forwarderAddress);
         }
+        emit ForwarderUpdated(forwarder, forwarderAddress);
         forwarder = forwarderAddress;
     }
 
