@@ -5,24 +5,27 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract RealEstateNft is ERC721, Ownable {
-
+    address public minter;
     uint256 private _nextId = 1;
-    address private _minter;
 
     error InvalidAddress(address);
-    error NotAllowedToMint(address);
+    error NotAllowed(address);
 
     constructor() ERC721("RealEstateNft", "REN") Ownable(msg.sender) {}
 
     modifier onlyMinter public {
-        if(msg.sender != _minter)
-            revert NotAllowedToMint(msg.sender);
+        if(msg.sender != minter)
+            revert NotAllowed(msg.sender);
         _;
     }
 
-    function setMinter(address minter) public onlyOwner {
-        if(minter == address(0))
-            revert InvalidAddress(minter);
+    function setForwarder(address forwarder)
+
+    function setMinter(address minterAddress) public onlyOwner {
+        if(minterAddress == address(0)){
+           revert InvalidAddress(minterAdress);
+        }
+        _minter = minterAddress;
     }
 
     function safeMint(address to) public onlyMinter {

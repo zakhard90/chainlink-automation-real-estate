@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
+import "@openzeppelin/contracts/access/Ownable.sol";
+
 struct Log {
     uint256 index; // Index of the log in the block
     uint256 timestamp; // Timestamp of the block containing the log
@@ -21,10 +23,28 @@ interface ILogAutomation {
     function performUpkeep(bytes calldata performData) external;
 }
 
-contract Minter is ILogAutomation {
+contract Minter is ILogAutomation, Ownable {
+    address public forwarder;
+
     event MintedBy(address indexed sender);
 
+    error InvalidAddress(address);
+    error NotAllowed(address);
+
     constructor() {}
+
+    modifier onlyForwarder public {
+        if(msg.sender != forwarder)
+            revert NotAllowed(msg.sender);
+        _;
+    }
+
+    function setForwarder(address forwarderAddress) public onlyOwner {
+        if (forwarderAddress == address(0)) {
+            revert InvalidAddress(forwarderAddress);
+        }
+        forwarder = forwarderAddress;
+    }
 
     function checkLog(
         Log calldata log,
@@ -35,7 +55,7 @@ contract Minter is ILogAutomation {
         performData = abi.encode(logSender);
     }
 
-    function performUpkeep(bytes calldata performData) external override {
+    function performUpkeep(bytes calldata performData) external override onlyForwarder {
         address logSender = abi.decode(performData, (address));
         emit MintedBy(logSender);
     }
