@@ -39,6 +39,27 @@ describe('Minter', function () {
     expect(Minter.connect(user).setForwarder(user)).to.be.revertedWithCustomError(Minter, 'OwnableUnauthorizedAccount');
   });
 
+  it('Check log returns correct values', async function () {
+    const { user, Minter } = await loadFixture(deployMinterFixture);
+
+    const mockBytes = ethers.zeroPadValue('0xabcd', 32);
+    const logUserAddress = ethers.zeroPadValue(user.address, 32);
+    const logData = {
+      index: 0,
+      timestamp: 1705555555,
+      txHash: mockBytes,
+      blockNumber: 12345,
+      blockHash: mockBytes,
+      source: '0x1234567890123456789012345678901234567890',
+      topics: [ethers.id('MockEvent(address,bytes)'),logUserAddress , mockBytes],
+      data: ethers.toUtf8Bytes('Mock log data bytes'),
+    };
+    const { upkeepNeeded, performData } = await Minter.checkLog(logData, mockBytes);
+    
+    expect(upkeepNeeded).to.equal(true);
+    expect(performData).to.equal(logUserAddress);
+  });
+
   it('Forwarder can perform upkeep', async function () {
     const { owner, forwarder, user, Minter } = await loadFixture(deployMinterFixture);
 
@@ -54,5 +75,15 @@ describe('Minter', function () {
       .withArgs(ethers.ZeroAddress, forwarder.address);
 
     await expect(Minter.connect(forwarder).performUpkeep(data)).to.emit(Minter, 'MintedBy').withArgs(logSender);
+  });
+
+  it('Non-forwarder cannot perform upkeep', async function () {
+    const { owner, forwarder, user, Minter } = await loadFixture(deployMinterFixture);
+
+    await expect(Minter.connect(owner).setForwarder(forwarder.address))
+      .to.emit(Minter, 'ForwarderUpdated')
+      .withArgs(ethers.ZeroAddress, forwarder.address);
+
+    expect(Minter.connect(user).performUpkeep(user.address)).to.be.revertedWithCustomError(Minter, 'NotAllowed');
   });
 });
