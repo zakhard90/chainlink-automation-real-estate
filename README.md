@@ -76,7 +76,15 @@ npx hardhat verify --network sepolia --contract contracts/PropertyAgent.sol:Prop
 
 ## Contract Interactions
 
-TODO
+After deploying and verifying all of the contracts, register a new Upkeep on the [Chainlink Automation](https://automation.chain.link/) panel.
+
+Follow the instrutions to configure the upkeep. Make sure to select Log Automation. Once done and the upkeep funded with LINK tokens, copy the Forwarder address and use it to set the forwarder on the `Minter` contract. To do so head to the verified contract on Sepolia Etherscan, connect the owner wallet and use the Write Contract tab to call the `setForwarder` function.
+
+Finally, to trigger the Log Automation, call the `purchase` task:
+
+```
+npx hardhat purchase --contract <PROPERTY_AGENT_ADDRESS> --network sepolia
+```
 
 ## License
 
