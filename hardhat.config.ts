@@ -3,6 +3,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-verify";
 import "dotenv/config";
+import "./tasks/purchase";
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const RPC_URL = process.env.RPC_URL || "";
