@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
+import "./interfaces/IMintableNft.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract RealEstateNft is ERC721, Ownable {
+contract RealEstateNft is ERC721, IMintableNft, Ownable {
     address public minter;
     uint256 private _nextId = 1;
 
@@ -20,7 +21,7 @@ contract RealEstateNft is ERC721, Ownable {
         _;
     }
 
-    function setMinter(address minterAddress) public onlyOwner {
+    function setMinter(address minterAddress) external onlyOwner {
         if (minterAddress == address(0)) {
             revert InvalidAddress(minterAddress);
         }
@@ -28,7 +29,7 @@ contract RealEstateNft is ERC721, Ownable {
         minter = minterAddress;
     }
 
-    function safeMint(address to) public onlyMinter {
+    function safeMint(address to) external override onlyMinter {
         _safeMint(to, _nextId);
         _nextId++;
     }
