@@ -51,7 +51,7 @@ contract Minter is ILogAutomation, Ownable {
     function checkLog(
         Log calldata log,
         bytes memory
-    ) external pure returns (bool upkeepNeeded, bytes memory performData) {
+    ) external view onlyForwarder returns (bool upkeepNeeded, bytes memory performData) {
         upkeepNeeded = true;
         address logSender = address(uint160(uint256((log.topics[1]))));
         performData = abi.encode(logSender);
