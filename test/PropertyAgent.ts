@@ -49,4 +49,55 @@ describe('PropertyAgent', function () {
       'PropertyAlreadyPurchased'
     );
   });
+
+  it('Should allow owner to withdraw', async function () {
+    const { user, owner, price, PropertyAgent } = await loadFixture(deployPropertyAgentFixture);
+    const ethAmount = price;
+
+    // Send ETH to contract
+    await user.sendTransaction({
+      to: PropertyAgent.getAddress(),
+      value: ethAmount,
+    });
+
+    const initialBalance = await ethers.provider.getBalance(owner.address);
+
+    // Withdraw
+    const tx = await PropertyAgent.connect(owner).withdraw();
+    const receipt = await tx.wait();
+
+    const gasCost = receipt!.gasUsed * receipt!.gasPrice;
+    const finalBalance = await ethers.provider.getBalance(owner.address);
+    expect(finalBalance - initialBalance).to.equal(ethAmount - BigInt(gasCost));
+  });
+
+  it('Should emit withdrawal event', async function () {
+    const { user, owner, price, PropertyAgent } = await loadFixture(deployPropertyAgentFixture);
+    const ethAmount = price;
+
+    await user.sendTransaction({
+      to: PropertyAgent.getAddress(),
+      value: ethAmount,
+    });
+
+    await expect(PropertyAgent.connect(owner).withdraw())
+      .to.emit(PropertyAgent, 'WithdrawalMade')
+      .withArgs(owner.address, ethAmount);
+  });
+
+  it('Should revert if caller is not owner', async function () {
+    const { owner, user, PropertyAgent } = await loadFixture(deployPropertyAgentFixture);
+    expect(await PropertyAgent.owner()).to.not.be.equal(user.address);
+    await expect(PropertyAgent.connect(user).withdraw()).to.be.revertedWithCustomError(
+      PropertyAgent,
+      'OwnableUnauthorizedAccount'
+    );
+  });
+
+  it('Should revert if contract has no balance', async function () {
+    const { owner, PropertyAgent } = await loadFixture(deployPropertyAgentFixture);
+    await expect(PropertyAgent.connect(owner).withdraw())
+      .to.emit(PropertyAgent, 'WithdrawalMade')
+      .withArgs(owner.address, 0);
+  });
 });
