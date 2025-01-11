@@ -43,7 +43,36 @@ npx hardhat test
 
 ### Deployment
 
-TODO
+## Setup and Deployment
+
+1. Deploy RealEstateNft contract.
+2. Deploy Minter contract with:
+   - RealEstateNft contract address as constructor argument
+3. Deploy PropertyAgent contract with:
+   - Property price in wei as constructor argument
+4. Configure Chainlink Automation
+5. Set the forwarder on the Minter contract
+
+To deploy the contracts, configure the `.env` file and run:
+
+```bash
+npx hardhat clean
+npx hardhat compile
+npx hardhat run scripts/deploy.ts --network sepolia
+```
+In case you want to verify the contracts on Etherscan, add the ETHERSCAN_API_KEY to the .env file and run:
+
+```bash
+npx hardhat verify --network sepolia --contract contracts/RealEstateNft.sol:RealEstateNft <DEPLOYED_CONTRACT_ADDRESS>
+```
+
+```bash
+npx hardhat verify --network sepolia --contract contracts/Minter.sol:Minter <DEPLOYED_CONTRACT_ADDRESS> <CONSTRUCTOR_ARG_1>
+```
+
+```bash
+npx hardhat verify --network sepolia --contract contracts/PropertyAgent.sol:PropertyAgent <DEPLOYED_CONTRACT_ADDRESS> <CONSTRUCTOR_ARG_1>
+```
 
 ## Contract Interactions
 
