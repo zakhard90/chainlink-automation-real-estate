@@ -9,7 +9,7 @@ contract PropertyAgent {
 
     error InvalidPropertyPrice(uint256);
     error PropertyAlreadyPurchased();
-    error InsufficientPurchaseValue(uint256);
+    error IncorrectValue(uint256);
 
     constructor(uint256 price) {
         if (price == 0) {
@@ -25,7 +25,7 @@ contract PropertyAgent {
         }
 
         if (msg.value != pripertyPrice) {
-            revert InsufficientPurchaseValue(msg.value);
+            revert IncorrectValue(msg.value);
         }
 
         isPurchased = true;
