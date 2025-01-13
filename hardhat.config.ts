@@ -4,6 +4,7 @@ import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-verify";
 import "dotenv/config";
 import "./tasks/purchase";
+import "./tasks/checkUpkeep";
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const RPC_URL = process.env.RPC_URL || "";
