@@ -85,6 +85,26 @@ Finally, to trigger the Log Automation, call the `purchase` task:
 ```
 npx hardhat purchase --contract <PROPERTY_AGENT_ADDRESS> --network sepolia
 ```
+After the transaction is confirmed, you should see the PropertyPurchase event on Etherscan.
+
+![](_screenshots/automation-event.png "Purchase event")
+
+After this, the resulting action should be visible in the History section of the Upkeep dashboard.
+
+![](_screenshots/automation-log.png "Log of the performed upkeep")
+
+Finally, the NFT is mint can be checked as well on the deployed RealEstate contract instance.
+
+![](_screenshots/automation-mint.png "Log of the performed upkeep")
+
+In case you want to make changes to the `checkUpkeep` function logic, there is a utility task you can use to check the behavior on the deployed contract:
+
+```
+npx hardhat checkUpkeep --contract <MINTER_ADDRESS> --network sepolia
+```
+Note that `checkUpkeep` should not be restricted, otherwise the upkeep call will revert. 
+
+For more information on how to debug issues related to Chainlink Automation, check [these guidelines](https://github.com/smartcontractkit/chainlink/blob/develop/core/scripts/chaincli/DEBUGGING.md).
 
 ## License
 
