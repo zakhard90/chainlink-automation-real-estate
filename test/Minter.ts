@@ -74,28 +74,6 @@ describe('Minter', function () {
     expect(performData).to.equal(logUserAddress);
   });
 
-  it('Non-forwarder cannot check log', async function () {
-    const { owner, forwarder, user, Minter } = await loadFixture(deployMinterFixture);
-    const mockBytes = ethers.zeroPadValue('0xabcd', 32);
-    const logUserAddress = ethers.zeroPadValue(user.address, 32);
-    const logData = {
-      index: 0,
-      timestamp: 1705555555,
-      txHash: mockBytes,
-      blockNumber: 12345,
-      blockHash: mockBytes,
-      source: '0x1234567890123456789012345678901234567890',
-      topics: [ethers.id('MockEvent(address,bytes)'), logUserAddress, mockBytes],
-      data: ethers.toUtf8Bytes('Mock log data bytes'),
-    };
-
-    await expect(Minter.connect(owner).setForwarder(forwarder.address))
-      .to.emit(Minter, 'ForwarderUpdated')
-      .withArgs(ethers.ZeroAddress, forwarder.address);
-
-    await expect(Minter.connect(user).checkLog(logData, mockBytes)).to.be.revertedWithCustomError(Minter, 'NotAllowed');
-  });
-
   it('Forwarder can perform upkeep', async function () {
     const { owner, forwarder, user, zeroAddress, Minter, RealEstateNft } = await loadFixture(deployMinterFixture);
     const expectedTokenId = 1;

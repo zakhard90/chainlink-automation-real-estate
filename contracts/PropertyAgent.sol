@@ -4,41 +4,41 @@ pragma solidity ^0.8.28;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract PropertyAgent is Ownable {
-    uint256 public immutable propertyPrice;
-    bool public isPurchased;
+  uint256 public immutable propertyPrice;
+  bool public isPurchased;
 
-    event PropertyPurchased(address indexed sender);
-    event WithdrawalMade(address owner, uint256 amount);
+  event PropertyPurchased(address indexed sender);
+  event WithdrawalMade(address owner, uint256 amount);
 
-    error InvalidPropertyPrice(uint256);
-    error PropertyAlreadyPurchased();
-    error IncorrectValue(uint256);
+  error InvalidPropertyPrice(uint256);
+  error PropertyAlreadyPurchased();
+  error IncorrectValue(uint256);
 
-    constructor(uint256 price) Ownable(msg.sender) {
-        if (price == 0) {
-            revert InvalidPropertyPrice(price);
-        }
-
-        propertyPrice = price;
+  constructor(uint256 price) Ownable(msg.sender) {
+    if (price == 0) {
+      revert InvalidPropertyPrice(price);
     }
 
-    receive() external payable {
-        if (isPurchased){
-            revert PropertyAlreadyPurchased();
-        }
+    propertyPrice = price;
+  }
 
-        if (msg.value != propertyPrice) {
-            revert IncorrectValue(msg.value);
-        }
+  receive() external payable {
+    if (isPurchased) {
+      revert PropertyAlreadyPurchased();
+    }
 
-        isPurchased = true;
-        emit PropertyPurchased(msg.sender);
+    if (msg.value != propertyPrice) {
+      revert IncorrectValue(msg.value);
     }
-    
-    function withdraw() external onlyOwner {
-        uint256 balance = address(this).balance;
-        address ownerAddress = owner();
-        payable(ownerAddress).transfer(balance);
-        emit WithdrawalMade(ownerAddress, balance);
-    }
+
+    isPurchased = true;
+    emit PropertyPurchased(msg.sender);
+  }
+
+  function withdraw() external onlyOwner {
+    uint256 balance = address(this).balance;
+    address ownerAddress = owner();
+    payable(ownerAddress).transfer(balance);
+    emit WithdrawalMade(ownerAddress, balance);
+  }
 }
